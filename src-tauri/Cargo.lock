@@ -573,6 +573,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5db83dced34638ad474f39f250d7fea9598bdd239eaced1bdf45d597da0f433f"
 dependencies = [
  "clap_builder",
+ "clap_derive",
 ]
 
 [[package]]
@@ -585,6 +586,18 @@ dependencies = [
  "anstyle",
  "clap_lex",
  "strsim",
+]
+
+[[package]]
+name = "clap_derive"
+version = "4.5.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c780290ccf4fb26629baa7a1081e68ced113f1d3ec302fa5948f1c381ebf06c6"
+dependencies = [
+ "heck 0.5.0",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.67",
 ]
 
 [[package]]
@@ -673,13 +686,12 @@ checksum = "6245d59a3e82a7fc217c5828a6692dbc6dfb63a0c8c90495621f7b9d79704a0e"
 name = "copybridge-app"
 version = "0.0.0"
 dependencies = [
+ "clap",
  "serde",
  "serde_json",
  "tauri",
  "tauri-build",
- "tauri-plugin-cli",
  "tauri-plugin-clipboard-manager",
- "tauri-plugin-process",
  "tauri-plugin-shell",
  "tauri-plugin-single-instance",
 ]
@@ -3872,21 +3884,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tauri-plugin-cli"
-version = "2.0.0-beta.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f0ca2caaa1fecce000c808e98cbfb1f3a810e3c5cef9a155ee44354c63b55fa0"
-dependencies = [
- "clap",
- "log",
- "serde",
- "serde_json",
- "tauri",
- "tauri-plugin",
- "thiserror",
-]
-
-[[package]]
 name = "tauri-plugin-clipboard-manager"
 version = "2.1.0-beta.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3900,16 +3897,6 @@ dependencies = [
  "tauri",
  "tauri-plugin",
  "thiserror",
-]
-
-[[package]]
-name = "tauri-plugin-process"
-version = "2.0.0-beta.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e63250e666101a12b206e15d9c3c1f061e2be94a1659ee13fa3fda8fceba28e5"
-dependencies = [
- "tauri",
- "tauri-plugin",
 ]
 
 [[package]]

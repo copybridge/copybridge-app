@@ -15,8 +15,6 @@
     "menu:default",
     "tray:default",
     "shell:allow-open",
-    "cli:default",
-    "clipboard-manager:default",
-    "process:default"
+    "clipboard-manager:default"
   ]
 }
