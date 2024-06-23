@@ -1,7 +1,7 @@
 {
   "productName": "copybridge-app",
   "version": "0.0.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.copybridge.app",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",
@@ -30,5 +30,32 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "cli": {
+      "description": "Tauri CLI Plugin Example",
+      "args": [
+        {
+          "short": "v",
+          "name": "verbose",
+          "description": "Verbosity level"
+        }
+      ],
+      "subcommands": {
+        "run": {
+          "description": "Run the application",
+          "args": [
+            {
+              "name": "debug",
+              "description": "Run application in debug mode"
+            },
+            {
+              "name": "release",
+              "description": "Run application in release mode"
+            }
+          ]
+        }
+      }
+    }
   }
 }
