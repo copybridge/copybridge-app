@@ -159,33 +159,41 @@ pub fn handle_cli() {
 }
 
 fn connect_command(address: &String) {
+    println!("Command not implemented yet");
     println!("{:?}", address);
 }
 
 fn add_command(args: &AddDeleteArgs) {
+    println!("Command not implemented yet");
     println!("{:?}", args);
 }
 
 fn create_command(name: &String) {
+    println!("Command not implemented yet");
     println!("{:?}", name);
 }
 
 fn list_command() {
+    println!("Command not implemented yet");
     println!("list");
 }
 
 fn copy_command(args: &CopyArgs) {
+    println!("Command not implemented yet");
     println!("{:?}", args);
 }
 
 fn paste_command(args: &PasteArgs) {
+    println!("Command not implemented yet");
     println!("{:?}", args);
 }
 
 fn remove_command(args: &RemoveArgs) {
+    println!("Command not implemented yet");
     println!("{:?}", args);
 }
 
 fn delete_command(args: &AddDeleteArgs) {
+    println!("Command not implemented yet");
     println!("{:?}", args);
 }
