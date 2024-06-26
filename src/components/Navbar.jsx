@@ -50,14 +50,16 @@ const Navbar = () => {
                       <Input id="password" defaultValue="" />
                     </div>
                   )}
-                  <div className="flex items-center space-x-2 mt-3.5">
-                    <label
-                      htmlFor="encrypted"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Secure it
-                    </label>
-                    <Checkbox id="encrypted" onClick={openPasswordCreate}/>
+                  <div className="flex items-center mt-3.5 justify-between">
+                    <div className='flex items-center space-x-2 mt-3.5'>
+                      <label
+                        htmlFor="encrypted"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        Secure it
+                      </label>
+                      <Checkbox id="encrypted" onClick={openPasswordCreate} checked={showPasswordFieldCreate}/>
+                    </div>
                     <Button size="sm" className='order-last m-1'>Create</Button>
                   </div>
                 </TabsContent>
@@ -72,14 +74,16 @@ const Navbar = () => {
                       <Input id="password" defaultValue="" />
                     </div>
                   )}
-                  <div className="flex items-center space-x-2 mt-3.5">
-                    <label
-                      htmlFor="encrypted"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Secured
-                    </label>
-                    <Checkbox id="encrypted" onClick={openPasswordAdd}/>
+                  <div className="flex items-center mt-3.5 justify-between">
+                    <div className='flex items-center space-x-2 mt-3.5'>
+                      <label
+                        htmlFor="encrypted"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        Is Secured
+                      </label>
+                      <Checkbox id="encrypted" onClick={openPasswordAdd} checked={showPasswordFieldAdd}/>
+                    </div>
                     <Button size="sm" className='order-last m-1'>Add</Button>
                   </div>
                 </TabsContent>
