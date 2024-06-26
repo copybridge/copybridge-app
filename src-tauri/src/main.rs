@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use config_file::Config;
 // use config::Clipboard;
 use tauri::{AppHandle, Manager};
 // use anyhow::{Result, Context};
@@ -11,6 +12,22 @@ mod config_file;
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
+}
+
+#[tauri::command]
+fn read_config() -> Result<Config, String> {
+    match config_file::read() {
+        Ok(config) => Ok(config),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+#[tauri::command]
+fn write_config(config: Config) -> Result<(), String> {
+    match config_file::write(&config) {
+        Ok(()) => Ok(()),
+        Err(e) => Err(e.to_string()),
+    }
 }
 
 fn main() {
@@ -34,6 +51,8 @@ fn main() {
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![read_config])
+        .invoke_handler(tauri::generate_handler![write_config])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
