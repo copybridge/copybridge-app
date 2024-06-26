@@ -1,3 +1,4 @@
+import { invoke } from "@tauri-apps/api/core"
 import { Button } from "@/components/ui/button"
 import { 
     MoreHorizontal, 
@@ -22,23 +23,32 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
 
-const Config = {
+let config = {
     server: "",
     clipboards: [
-      {
-        id: 100004,
-        name: "test",
-        is_encrypted: true,
-        password: "bXlwYXNzCg==" // base64 encoded for "mypass"
-      },
-      {
-        id: 100005,
-        name: "another test",
-        is_encrypted: false,
-        password: null // No password since is_encrypted is false
-      }
+        {
+            id: 100004,
+            name: "test",
+            is_encrypted: true,
+            password: "bXlwYXNzCg==" // base64 encoded for "mypass"
+        },
+        {
+            id: 100005,
+            name: "another test",
+            is_encrypted: false,
+            password: null // No password since is_encrypted is false
+        }
     ]
-  };
+};
+
+// invoke("read_config")
+//     .then((res) => {
+//         config = res;
+//     })
+//     .catch((err) => {
+//         console.log(err);
+//     });
+
 
 function ClipBoard() {
     return (
@@ -46,7 +56,7 @@ function ClipBoard() {
         <Table>
             <TableCaption>Your current active clipboards.</TableCaption>
             <TableBody>
-                {Config.clipboards.map((clipboard) => (
+                {config.clipboards.map((clipboard) => (
                     <TableRow key={clipboard.id}>
                         <TableCell className="font-medium text-base text-center">{clipboard.name}</TableCell>
                         <TableCell className="text-right">
@@ -76,10 +86,9 @@ function ClipBoard() {
                             </DropdownMenu>
                         </TableCell>
                     </TableRow>
-                )
+                ))}
             </TableBody>
         </Table>
-
         </div>
     );
 }

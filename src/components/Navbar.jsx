@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -47,7 +48,8 @@ const Navbar = () => {
                   {showPasswordFieldCreate && (
                     <div className="space-y-1">
                       <Label htmlFor="password">Password</Label>
-                      <Input id="password" defaultValue="" />
+                      {/* <Input id="password" type="password" defaultValue="" /> */}
+                      <PasswordInput id="password" defaultValue="" />
                     </div>
                   )}
                   <div className="flex items-center mt-3.5 justify-between">
@@ -71,7 +73,8 @@ const Navbar = () => {
                   {showPasswordFieldAdd && (
                     <div className="space-y-1">
                       <Label htmlFor="password">Password</Label>
-                      <Input id="password" defaultValue="" />
+                      {/* <Input id="password" defaultValue="" /> */}
+                      <PasswordInput id="password" defaultValue="" />
                     </div>
                   )}
                   <div className="flex items-center mt-3.5 justify-between">

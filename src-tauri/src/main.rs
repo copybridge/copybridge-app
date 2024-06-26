@@ -15,7 +15,7 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn read_config() -> Result<Config, String> {
+async fn read_config() -> Result<Config, String> {
     match config_file::read() {
         Ok(config) => Ok(config),
         Err(e) => Err(e.to_string()),
@@ -23,7 +23,7 @@ fn read_config() -> Result<Config, String> {
 }
 
 #[tauri::command]
-fn write_config(config: Config) -> Result<(), String> {
+async fn write_config(config: Config) -> Result<(), String> {
     match config_file::write(&config) {
         Ok(()) => Ok(()),
         Err(e) => Err(e.to_string()),
@@ -50,9 +50,7 @@ fn main() {
         }))
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![greet])
-        .invoke_handler(tauri::generate_handler![read_config])
-        .invoke_handler(tauri::generate_handler![write_config])
+        .invoke_handler(tauri::generate_handler![greet, read_config, write_config])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
