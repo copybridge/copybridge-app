@@ -37,7 +37,12 @@ fn main() {
         }))
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![greet, read_config, write_config])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            read_config,
+            write_config,
+            cmd::add
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 

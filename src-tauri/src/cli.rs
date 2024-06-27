@@ -2,6 +2,7 @@ use std::process;
 use clap::{ArgGroup, Args, Parser, Subcommand};
 use tauri::Url;
 use tokio::runtime::Runtime;
+use serde::{Deserialize, Serialize};
 use crate::config_file::Config;
 use crate::cmd;
 
@@ -52,7 +53,7 @@ enum Commands {
     Delete(AddDeleteArgs),
 }
 
-#[derive(Args, Clone, Debug)]
+#[derive(Args, Clone, Debug, Deserialize, Serialize)]
 pub struct AddDeleteArgs {
     /// Clipboard ID from other device
     pub id: u32,
@@ -66,7 +67,7 @@ pub struct AddDeleteArgs {
     pub force: bool,
 }
 
-#[derive(Args, Clone, Debug)]
+#[derive(Args, Clone, Debug, Deserialize, Serialize)]
 #[command(group(
     ArgGroup::new("copy_from")
         .required(true)
@@ -90,7 +91,7 @@ pub struct CopyArgs {
     pub echo: bool,
 }
 
-#[derive(Args, Clone, Debug)]
+#[derive(Args, Clone, Debug, Deserialize, Serialize)]
 #[command(group(
     ArgGroup::new("paste_to")
         .required(true)
@@ -122,7 +123,7 @@ pub struct PasteArgs {
     pub file: Option<String>,
 }
 
-#[derive(Args, Clone, Debug)]
+#[derive(Args, Clone, Debug, Deserialize, Serialize)]
 #[command(group(
     ArgGroup::new("remove_by")
         .required(true)
