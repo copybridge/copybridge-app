@@ -37,7 +37,7 @@ pub async fn connect(config: Config, server_url: Url) -> Result<(), Error> {
             return Ok(());
         }
         println!("Successfully connected to the server");
-        config.server = server_url.clone().into();
+        config.server = server_url.to_string();
         config.write().unwrap();
     } else {
         return Err(Error::new(

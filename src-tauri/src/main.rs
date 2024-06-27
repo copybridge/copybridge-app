@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use config_file::Config;
+use config_file::{read_config, write_config};
 // use config::Clipboard;
 use tauri::{AppHandle, Manager};
 // use anyhow::{Result, Context};
@@ -14,28 +14,6 @@ mod err;
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-#[tauri::command]
-async fn read_config() -> Result<Config, err::Error> {
-    match Config::read() {
-        Ok(config) => Ok(config),
-        Err(e) => Err(err::Error::new(
-            "Failed to read config".to_string(),
-            e.to_string()
-        )),
-    }
-}
-
-#[tauri::command]
-async fn write_config(config: Config) -> Result<(), err::Error> {
-    match config.write() {
-        Ok(()) => Ok(()),
-        Err(e) => Err(err::Error::new(
-            "Failed to store config".to_string(),
-            e.to_string()
-        )),
-    }
 }
 
 fn main() {

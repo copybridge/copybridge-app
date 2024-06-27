@@ -3,6 +3,29 @@ use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
+use crate::err;
+
+#[tauri::command]
+pub async fn read_config() -> Result<Config, err::Error> {
+    match Config::read() {
+        Ok(config) => Ok(config),
+        Err(e) => Err(err::Error::new(
+            "Failed to read config".to_string(),
+            e.to_string()
+        )),
+    }
+}
+
+#[tauri::command]
+pub async fn write_config(config: Config) -> Result<(), err::Error> {
+    match config.write() {
+        Ok(()) => Ok(()),
+        Err(e) => Err(err::Error::new(
+            "Failed to store config".to_string(),
+            e.to_string()
+        )),
+    }
+}
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Config {
@@ -14,7 +37,7 @@ pub struct Config {
 pub struct Clipboard {
     pub id: u32,
     pub name: String,
-    pub is_encrypted: bool,
+    // pub is_encrypted: bool,
     pub password: Option<String>,
 }
 
@@ -63,6 +86,18 @@ impl Config {
         // println!("Config path: {:?}", config_path);
     
         Ok(config_path)
+    }
+
+    pub fn get_clipboard(&self, id: u32) -> Option<&Clipboard> {
+        self.clipboards.iter().find(|c| c.id == id)
+    }
+
+    pub fn remove_clipboard(&mut self, id: u32) -> Option<Clipboard> {
+        let index = self.clipboards.iter().position(|c| c.id == id);
+        match index {
+            Some(index) => Some(self.clipboards.remove(index)),
+            None => None,
+        }
     }
 }
 

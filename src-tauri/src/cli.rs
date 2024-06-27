@@ -5,6 +5,18 @@ use tokio::runtime::Runtime;
 use crate::config_file::Config;
 use crate::cmd;
 
+use std::sync::atomic::{AtomicBool, Ordering};
+
+pub static IS_CLI: AtomicBool = AtomicBool::new(false);
+
+fn set_is_cli(value: bool) {
+    IS_CLI.store(value, Ordering::SeqCst);
+}
+
+pub fn is_cli() -> bool {
+    IS_CLI.load(Ordering::SeqCst)
+}
+
 /// Simple program to greet a person
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -40,17 +52,21 @@ enum Commands {
     Delete(AddDeleteArgs),
 }
 
-#[derive(Args, Debug)]
+#[derive(Args, Clone, Debug)]
 pub struct AddDeleteArgs {
     /// Clipboard ID from other device
-    id: u32,
+    pub id: u32,
 
     /// Password for the clipboard if it is encrypted
     #[arg(short, long)]
-    password: Option<String>,
+    pub password: Option<String>,
+
+    /// Force the operation
+    #[arg(short, long)]
+    pub force: bool,
 }
 
-#[derive(Args, Debug)]
+#[derive(Args, Clone, Debug)]
 #[command(group(
     ArgGroup::new("copy_from")
         .required(true)
@@ -59,22 +75,22 @@ pub struct AddDeleteArgs {
 pub struct CopyArgs {
     /// The clipboard ID to copy
     #[arg(short, long)]
-    id: Option<u32>,
+    pub id: Option<u32>,
 
     /// The name of the clipboard to copy
     #[arg(short, long)]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// Password for the clipboard if it is encrypted
     #[arg(short, long)]
-    password: Option<String>,
+    pub password: Option<String>,
 
     /// Print the copied content into console
     #[arg(long)]
-    echo: bool,
+    pub echo: bool,
 }
 
-#[derive(Args, Debug)]
+#[derive(Args, Clone, Debug)]
 #[command(group(
     ArgGroup::new("paste_to")
         .required(true)
@@ -88,25 +104,25 @@ pub struct CopyArgs {
 pub struct PasteArgs {
     /// The clipboard ID to copy
     #[arg(short, long)]
-    id: Option<u32>,
+    pub id: Option<u32>,
 
     /// The name of the clipboard to copy
     #[arg(short, long)]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// Password for the clipboard if it is encrypted
     #[arg(short, long)]
-    password: Option<String>,
+    pub password: Option<String>,
 
     /// Content to be pasted
-    content: Option<String>,
+    pub content: Option<String>,
 
     /// Content of the file to be pasted
     #[arg(short, long)]
-    file: Option<String>,
+    pub file: Option<String>,
 }
 
-#[derive(Parser, Debug)]
+#[derive(Args, Clone, Debug)]
 #[command(group(
     ArgGroup::new("remove_by")
         .required(true)
@@ -114,11 +130,11 @@ pub struct PasteArgs {
 ))]
 pub struct RemoveArgs {
     /// The clipboard ID to remove
-    id: Option<u32>,
+    pub id: Option<u32>,
 
     /// The name of the clipboard to remove
     #[arg(short, long)]
-    name: Option<String>,
+    pub name: Option<String>,
 }
 
 pub fn handle_cli() {
@@ -126,6 +142,7 @@ pub fn handle_cli() {
 
     match &cli.command {
         Some(command) => {
+            set_is_cli(true);
             let config = Config::read().unwrap();
             let mut exit_code = 0;
             // CONFIG
@@ -136,7 +153,7 @@ pub fn handle_cli() {
                     exit_code = cli_connect(config, server_url);
                 }
                 Commands::Add(args) => {
-                    cmd::add(args);
+                    exit_code = cli_add(config, args);
                 }
                 Commands::Create { name } => {
                     cmd::create(name);
@@ -167,6 +184,16 @@ pub fn handle_cli() {
 
 fn cli_connect(config: Config, server_url: &Url) -> i32 {
     match Runtime::new().unwrap().block_on(cmd::connect(config, server_url.clone())) {
+        Ok(()) => 0,
+        Err(err) => {
+            println!("{}: {}", err.title, err.message);
+            err.code
+        }
+    }
+}
+
+fn cli_add(config: Config, args: &AddDeleteArgs) -> i32 {
+    match Runtime::new().unwrap().block_on(cmd::add(config, args.clone())) {
         Ok(()) => 0,
         Err(err) => {
             println!("{}: {}", err.title, err.message);

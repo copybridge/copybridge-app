@@ -21,3 +21,15 @@ pub use remove::*;
 
 pub mod delete;
 pub use delete::*;
+
+use serde::{Deserialize, Serialize};
+
+#[derive(Deserialize, Serialize, Debug)]
+struct ApiResponse {
+    pub id: u32,
+    pub name: String,
+    #[serde(rename = "type")]
+    pub data_type: String,
+    pub data: String,
+    pub is_encrypted: bool,
+}
