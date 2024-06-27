@@ -33,8 +33,8 @@ const Navbar = () => {
         <DialogTrigger asChild>
           <Button size="sm" variant="" className='order-last m-1'> + New Clipboard</Button>
         </DialogTrigger>
-          <DialogContent>
-              <Tabs defaultValue="create-clipboard" className="w-[400px]">
+          <DialogContent className="w-[400px]">
+              <Tabs defaultValue="create-clipboard" className="w-[350px]">
                 <TabsList>
                   <TabsTrigger value="create-clipboard">Create Clipboard</TabsTrigger>
                   <TabsTrigger value="add-clipboard">Add Clipboard</TabsTrigger>
@@ -58,7 +58,7 @@ const Navbar = () => {
                         htmlFor="encrypted"
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
-                        Secure it
+                        Encrypt it
                       </label>
                       <Checkbox id="encrypted" onClick={openPasswordCreate} checked={showPasswordFieldCreate}/>
                     </div>
@@ -83,7 +83,7 @@ const Navbar = () => {
                         htmlFor="encrypted"
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
-                        Is Secured
+                        Is Encrypted
                       </label>
                       <Checkbox id="encrypted" onClick={openPasswordAdd} checked={showPasswordFieldAdd}/>
                     </div>

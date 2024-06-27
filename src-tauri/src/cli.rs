@@ -1,6 +1,9 @@
 use std::process;
-
 use clap::{ArgGroup, Args, Parser, Subcommand};
+use tauri::Url;
+use tokio::runtime::Runtime;
+use crate::config_file::Config;
+use crate::cmd;
 
 /// Simple program to greet a person
 #[derive(Parser)]
@@ -13,7 +16,7 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     /// Connect the app to a server
-    Connect { address: String },
+    Connect { server_url: Url },
 
     /// Create a new clipboard and add to this device
     Create { name: String },
@@ -38,7 +41,7 @@ enum Commands {
 }
 
 #[derive(Args, Debug)]
-struct AddDeleteArgs {
+pub struct AddDeleteArgs {
     /// Clipboard ID from other device
     id: u32,
 
@@ -53,7 +56,7 @@ struct AddDeleteArgs {
         .required(true)
         .args(&["id", "name"])
 ))]
-struct CopyArgs {
+pub struct CopyArgs {
     /// The clipboard ID to copy
     #[arg(short, long)]
     id: Option<u32>,
@@ -82,7 +85,7 @@ struct CopyArgs {
         .required(true)
         .args(&["content", "file"])
 ))]
-struct PasteArgs {
+pub struct PasteArgs {
     /// The clipboard ID to copy
     #[arg(short, long)]
     id: Option<u32>,
@@ -109,7 +112,7 @@ struct PasteArgs {
         .required(true)
         .args(&["id", "name"])
 ))]
-struct RemoveArgs {
+pub struct RemoveArgs {
     /// The clipboard ID to remove
     id: Option<u32>,
 
@@ -123,77 +126,51 @@ pub fn handle_cli() {
 
     match &cli.command {
         Some(command) => {
+            let config = Config::read().unwrap();
+            let mut exit_code = 0;
+            // CONFIG
+            //     .set(Mutex::new(config))
+            //     .expect("Config already initialized");
             match command {
-                Commands::Connect { address } => {
-                    connect_command(address);
+                Commands::Connect { server_url } => {
+                    exit_code = cli_connect(config, server_url);
                 }
                 Commands::Add(args) => {
-                    add_command(args);
+                    cmd::add(args);
                 }
                 Commands::Create { name } => {
-                    create_command(name);
+                    cmd::create(name);
                 }
                 Commands::List => {
-                    list_command();
+                    cmd::list();
                 }
                 Commands::Copy(args) => {
-                    copy_command(args);
+                    cmd::copy(args);
                 }
                 Commands::Paste(args) => {
-                    paste_command(args);
+                    cmd::paste(args);
                 }
                 Commands::Remove(args) => {
-                    remove_command(args);
+                    cmd::remove(args);
                 }
                 Commands::Delete(args) => {
-                    delete_command(args);
-                }
-                // _ => {
-                //     println!("Not implemented yet!!");
-                // }
+                    cmd::delete(args);
+                } // _ => {
+                  //     println!("Not implemented yet!!");
+                  // }
             }
-            process::exit(0);
+            process::exit(exit_code);
         }
         None => {}
     }
 }
 
-fn connect_command(address: &String) {
-    println!("Command not implemented yet");
-    println!("{:?}", address);
-}
-
-fn add_command(args: &AddDeleteArgs) {
-    println!("Command not implemented yet");
-    println!("{:?}", args);
-}
-
-fn create_command(name: &String) {
-    println!("Command not implemented yet");
-    println!("{:?}", name);
-}
-
-fn list_command() {
-    println!("Command not implemented yet");
-    println!("list");
-}
-
-fn copy_command(args: &CopyArgs) {
-    println!("Command not implemented yet");
-    println!("{:?}", args);
-}
-
-fn paste_command(args: &PasteArgs) {
-    println!("Command not implemented yet");
-    println!("{:?}", args);
-}
-
-fn remove_command(args: &RemoveArgs) {
-    println!("Command not implemented yet");
-    println!("{:?}", args);
-}
-
-fn delete_command(args: &AddDeleteArgs) {
-    println!("Command not implemented yet");
-    println!("{:?}", args);
+fn cli_connect(config: Config, server_url: &Url) -> i32 {
+    match Runtime::new().unwrap().block_on(cmd::connect(config, server_url.clone())) {
+        Ok(()) => 0,
+        Err(err) => {
+            println!("{}: {}", err.title, err.message);
+            err.code
+        }
+    }
 }

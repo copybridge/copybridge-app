@@ -12,13 +12,14 @@
     "windows": [
       {
         "title": "copybridge-app",
-        "width": 800,
+        "width": 450,
         "height": 600
       }
     ],
     "security": {
       "csp": null
-    }
+    },
+    "withGlobalTauri": true
   },
   "bundle": {
     "active": true,

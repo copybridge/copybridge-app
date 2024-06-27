@@ -15,6 +15,7 @@
     "menu:default",
     "tray:default",
     "shell:allow-open",
-    "clipboard-manager:default"
+    "clipboard-manager:default",
+    "http:default"
   ]
 }

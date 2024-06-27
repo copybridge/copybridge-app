@@ -7,6 +7,8 @@ use tauri::{AppHandle, Manager};
 // use anyhow::{Result, Context};
 mod cli;
 mod config_file;
+mod cmd;
+mod err;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -15,25 +17,31 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-async fn read_config() -> Result<Config, String> {
-    match config_file::read() {
+async fn read_config() -> Result<Config, err::Error> {
+    match Config::read() {
         Ok(config) => Ok(config),
-        Err(e) => Err(e.to_string()),
+        Err(e) => Err(err::Error::new(
+            "Failed to read config".to_string(),
+            e.to_string()
+        )),
     }
 }
 
 #[tauri::command]
-async fn write_config(config: Config) -> Result<(), String> {
-    match config_file::write(&config) {
+async fn write_config(config: Config) -> Result<(), err::Error> {
+    match config.write() {
         Ok(()) => Ok(()),
-        Err(e) => Err(e.to_string()),
+        Err(e) => Err(err::Error::new(
+            "Failed to store config".to_string(),
+            e.to_string()
+        )),
     }
 }
 
 fn main() {
-    let mut config = config_file::read().unwrap();
-    println!("{:#?}", config);
-    config.server = "localhost:8080".to_string();
+    // let config = config_file::read().unwrap();
+    // println!("{:#?}", config);
+    // config.server = ;
     // config.clipboards.push(Clipboard {
     //     id: 100002,
     //     name: "test".to_string(),
@@ -41,10 +49,11 @@ fn main() {
     //     password: None,
     // });
     // config_file::write(&config).unwrap();
-    
+
     cli::handle_cli();
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             let _ = show_window(app);
         }))
@@ -60,7 +69,6 @@ fn main() {
     //     // }
     //     _ => {}
     // })
-
 }
 
 fn show_window(app: &AppHandle) {

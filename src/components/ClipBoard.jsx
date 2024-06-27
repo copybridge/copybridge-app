@@ -4,7 +4,8 @@ import {
     MoreHorizontal, 
     Copy, 
     ClipboardPaste,
-  } from "lucide-react"
+    AlertCircle,
+} from "lucide-react"
 import {
     Table,
     TableBody,
@@ -13,7 +14,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-  } from "@/components/ui/table"
+} from "@/components/ui/table"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -21,41 +22,48 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-  } from "@/components/ui/dropdown-menu"
-
-let config = {
-    server: "",
-    clipboards: [
-        {
-            id: 100004,
-            name: "test",
-            is_encrypted: true,
-            password: "bXlwYXNzCg==" // base64 encoded for "mypass"
-        },
-        {
-            id: 100005,
-            name: "another test",
-            is_encrypted: false,
-            password: null // No password since is_encrypted is false
-        }
-    ]
-};
-
-// invoke("read_config")
-//     .then((res) => {
-//         config = res;
-//     })
-//     .catch((err) => {
-//         console.log(err);
-//     });
+} from "@/components/ui/dropdown-menu"
+import {
+    Alert,
+    AlertDescription,
+    AlertTitle,
+} from "@/components/ui/alert"
+import { useEffect, useState } from "react"
 
 
 function ClipBoard() {
+    let defaultConfig = {
+        server: "",
+        clipboards: []
+    };
+    const [config, setConfig] = useState(defaultConfig)
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        invoke("read_config")
+            .then((res) => {
+                setConfig(res);
+                setError(null);
+            })
+            .catch((err) => {
+                setError(err);
+            });
+    } , [])
+
     return (
         <div>
         <Table>
             <TableCaption>Your current active clipboards.</TableCaption>
             <TableBody>
+                {error && (
+                    <Alert variant="destructive" className="text-red-400">
+                        <AlertCircle className="h-5 w-5" />
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>
+                        <span className="bold">{error.title}</span>: {error.message}
+                        </AlertDescription>
+                    </Alert>
+                )}
                 {config.clipboards.map((clipboard) => (
                     <TableRow key={clipboard.id}>
                         <TableCell className="font-medium text-base text-center">{clipboard.name}</TableCell>
@@ -73,10 +81,10 @@ function ClipBoard() {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                    <DropdownMenuItem>Copy Clipboard ID</DropdownMenuItem>
-                                    <DropdownMenuItem>Rename Clipboard</DropdownMenuItem>
+                                    <DropdownMenuItem>Copy ID</DropdownMenuItem>
+                                    <DropdownMenuItem>Rename</DropdownMenuItem>
+                                    <DropdownMenuItem>Remove</DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem>Remove Clipboard</DropdownMenuItem>
                                     <DropdownMenuItem>
                                         <Button variant="destructive">
                                             Delete Clipboard
