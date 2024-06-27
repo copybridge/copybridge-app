@@ -70,8 +70,6 @@ function ClipBoard() {
                         <TableCell className="text-right">
                             <Button size="sm" className="mx-2" variant='outline'>Copy <Copy className="ml-2 h-4 w-4" /></Button>
                             <Button size="sm" className="mx-1" variant='outline'>Paste <ClipboardPaste className="ml-2 h-4 w-4" /></Button>
-                        {/* </TableCell>
-                        <TableCell> */}
                             <DropdownMenu className=''>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" className="h-8 w-8 p-0">
@@ -85,10 +83,8 @@ function ClipBoard() {
                                     <DropdownMenuItem>Rename</DropdownMenuItem>
                                     <DropdownMenuItem>Remove</DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem>
-                                        <Button variant="destructive">
+                                    <DropdownMenuItem className="text-red-500 hover:text-red-600">
                                             Delete Clipboard
-                                        </Button>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
