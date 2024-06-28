@@ -1,5 +1,6 @@
-use std::process;
+use std::{path::PathBuf, process};
 use clap::{ArgGroup, Args, Parser, Subcommand};
+use tauri_plugin_clipboard_manager::ClipboardExt;
 use tauri::Url;
 use tokio::runtime::Runtime;
 use serde::{Deserialize, Serialize};
@@ -96,9 +97,9 @@ pub struct CopyArgs {
     #[arg(short, long)]
     pub name: Option<String>,
 
-    /// Password for the clipboard if it is encrypted
-    #[arg(short, long)]
-    pub password: Option<String>,
+    // /// Password for the clipboard if it is encrypted
+    // #[arg(short, long)]
+    // pub password: Option<String>,
 
     /// Print the copied content into console
     #[arg(long)]
@@ -125,16 +126,20 @@ pub struct PasteArgs {
     #[arg(short, long)]
     pub name: Option<String>,
 
-    /// Password for the clipboard if it is encrypted
+    // /// Password for the clipboard if it is encrypted
+    // #[arg(short, long)]
+    // pub password: Option<String>,
+
+    /// Type of the content to be pasted
     #[arg(short, long)]
-    pub password: Option<String>,
+    pub data_type: Option<String>,
 
     /// Content to be pasted
     pub content: Option<String>,
 
     /// Content of the file to be pasted
     #[arg(short, long)]
-    pub file: Option<String>,
+    pub file: Option<PathBuf>,
 }
 
 #[derive(Args, Clone, Debug, Deserialize, Serialize)]
@@ -174,10 +179,10 @@ pub fn handle_cli() {
                     cmd::list();
                 }
                 Commands::Copy(args) => {
-                    cmd::copy(args);
+                    exit_code = cli_copy(config, args);
                 }
                 Commands::Paste(args) => {
-                    cmd::paste(args);
+                    exit_code = cli_paste(config, args);
                 }
                 Commands::Remove(args) => {
                     cmd::remove(args);
@@ -216,6 +221,55 @@ fn cli_create(config: Config, args: &CreateArgs) -> i32 {
 
 fn cli_add(config: Config, args: &AddDeleteArgs) -> i32 {
     match Runtime::new().unwrap().block_on(cmd::add(config, args.clone())) {
+        Ok(()) => 0,
+        Err(err) => {
+            println!("{}: {}", err.title, err.message);
+            err.code
+        }
+    }
+}
+
+fn cli_copy(config: Config, args: &CopyArgs) -> i32 {
+    // let mut ctx = ClipboardManager::new().unwrap();
+
+    let content = match Runtime::new().unwrap().block_on(cmd::get_content(config, args.clone())) {
+        Ok(content) => content,
+        Err(err) => {
+            println!("{}: {}", err.title, err.message);
+            return err.code
+        }
+    };
+
+    let app = tauri::Builder::default()
+        .plugin(tauri_plugin_clipboard_manager::init())
+        .build(tauri::generate_context!())
+        .expect("msg");
+
+    // let clipboard_content = tauri_plugin_clipboard_manager::ClipboardExt:: {
+    //     label: Some("Label".to_string()),
+    //     text: "Tauri is awesome!".to_string(),
+    // };
+
+    app.clipboard().write_text(content.data).unwrap();
+
+    // tauri_plugin_clipboard_manager::init()
+
+    // ctx.set().wait().clipboard(LinuxClipboardKind::Primary).text(content.data.clone()).unwrap();
+
+    // match Runtime::new().unwrap().block_on(cmd::copy(config, args.clone())) {
+    //     Ok(content) => content,
+    //     Err(err) => {
+    //         println!("{}: {}", err.title, err.message);
+    //         return err.code
+    //     }
+    // };
+
+
+    return 0
+}
+
+fn cli_paste(config: Config, args: &PasteArgs) -> i32 {
+    match Runtime::new().unwrap().block_on(cmd::set_content(config, args.clone())) {
         Ok(()) => 0,
         Err(err) => {
             println!("{}: {}", err.title, err.message);

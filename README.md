@@ -10,8 +10,8 @@ This template should help get you started developing with Tauri and React in Vit
 
 ```
 connect <addr>
-create <name>
-add <id> [ -p <password> ]
+create <name> [ -p <password> ] [ -f ]
+add <id> [ -p <password> ] [ -f ]
 list
 copy [ -i <id> | -n <name> ] [ -p <password> ] [ --echo ]
 paste [ -i <id> | -n <name> ] [ -p <password> ] [ <content> | -f <file> ]
@@ -35,6 +35,7 @@ name="another test"
 ```
 
 ## TODO
+- Systray
 - Names are independent to each device:
   - [ ] Add optional `name` field to `AddArgs` (Seperate `AddDeleteArgs`)
   - [ ] Ask for name in cli while `add`

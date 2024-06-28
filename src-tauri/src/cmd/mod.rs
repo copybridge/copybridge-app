@@ -44,7 +44,7 @@ struct PostBody {
 }
 
 #[derive(Deserialize, Serialize, Debug)]
-struct PutBody {
+pub struct Content {
     #[serde(rename = "type")]
     pub data_type: String,
     pub data: String,

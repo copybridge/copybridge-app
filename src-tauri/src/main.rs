@@ -4,6 +4,10 @@
 use config_file::{read_config, write_config};
 // use config::Clipboard;
 use tauri::{AppHandle, Manager};
+use tauri::{
+    menu::{MenuBuilder, MenuItemBuilder},
+    tray::{MouseButton, TrayIconBuilder, TrayIconEvent},
+};
 // use anyhow::{Result, Context};
 mod cli;
 mod config_file;
@@ -43,14 +47,61 @@ fn main() {
             write_config,
             cmd::create,
             cmd::add,
+            cmd::get_content,
+            cmd::set_content,
         ])
+        .on_window_event(|window, event| match event {
+            // tauri::WindowEvent::Focused(focused) => {
+            //     // hide window whenever it loses focus
+            //     if !focused {
+            //         window.hide().unwrap();
+            //     }
+            // }
+            tauri::WindowEvent::CloseRequested { api, .. } => {
+                window.hide().unwrap();
+                api.prevent_close();
+            }
+            _ => {}
+        })
+        .setup(|app| {
+            let toggle = MenuItemBuilder::with_id("toggle", "Toggle Window").build(app)?;
+            let quit = MenuItemBuilder::with_id("quit", "Quit").build(app)?;
+            let menu = MenuBuilder::new(app).items(&[&toggle, &quit]).build()?;
+            let _tray = TrayIconBuilder::new()
+                .menu(&menu)
+                .on_menu_event(move |app, event| match event.id().as_ref() {
+                    "toggle" => {
+                        toggle_window(app);
+                    }
+                    "quit" => {
+                        app.exit(0);
+                    }
+                    _ => (),
+                })
+                .menu_on_left_click(false)
+                .on_tray_icon_event(|tray, event| {
+                    match event {
+                        TrayIconEvent::Click {
+                            button: MouseButton::Left,
+                            ..
+                        } => {
+                            toggle_window(tray.app_handle());
+                        }
+                        _ => {}
+                    }
+                })
+                .build(app)?;
+
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
     // app.run(|_app_handle, event| match event {
-    //     // tauri::RunEvent::ExitRequested { api, .. } => {
-    //     //     api.prevent_exit();
-    //     // }
+    //     tauri::RunEvent::ExitRequested { api, .. } => {
+    //         event.window().hide().unwrap();
+    //         api.prevent_exit();
+    //     }
     //     _ => {}
     // })
 }
@@ -64,4 +115,19 @@ fn show_window(app: &AppHandle) {
         .expect("Sorry, no window found")
         .set_focus()
         .expect("Can't Bring Window to Focus");
+}
+
+fn toggle_window(app: &AppHandle) {
+    let windows = app.webview_windows();
+
+    let my_window = windows
+            .values()
+            .next()
+            .expect("Sorry, no window found");
+    
+    if my_window.is_visible().expect("Can't Check Window Visibility") {
+        let _ = my_window.hide();
+    } else {
+        let _ = my_window.show();
+    }
 }
