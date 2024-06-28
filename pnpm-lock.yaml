@@ -35,6 +35,9 @@ importers:
       '@tauri-apps/plugin-clipboard-manager':
         specifier: 2.1.0-beta.3
         version: 2.1.0-beta.3
+      '@tauri-apps/plugin-http':
+        specifier: ^2.0.0-beta.6
+        version: 2.0.0-beta.6
       '@tauri-apps/plugin-shell':
         specifier: '>=2.0.0-beta.0'
         version: 2.0.0-beta.6
@@ -882,6 +885,9 @@ packages:
 
   '@tauri-apps/plugin-clipboard-manager@2.1.0-beta.3':
     resolution: {integrity: sha512-j48jTdZWeX5BylIGLYbXtg6ynZAcFKDKK6dguHAbG3zviqNE/XMf2vHOPJeFDZsDE5kVOZZS7nKOj7T2WiCpvw==}
+
+  '@tauri-apps/plugin-http@2.0.0-beta.6':
+    resolution: {integrity: sha512-/5cDY9LwrZkPBTqxx2xwvzA3fzYS+Y1UD0rK9NVxjKkNXoA9NmGxEetug05u0KPbOtciyFiTyq31koszlPy6KA==}
 
   '@tauri-apps/plugin-shell@2.0.0-beta.6':
     resolution: {integrity: sha512-g3nM9cQQGl7Iv4MvyFuco/aPTiwOI/MixcoKso3VQIg5Aqd64NqR0r+GfsB0qx52txItqzSXwmeaj1eZjO9Q6Q==}
@@ -2188,6 +2194,10 @@ snapshots:
       '@tauri-apps/cli-win32-x64-msvc': 2.0.0-beta.20
 
   '@tauri-apps/plugin-clipboard-manager@2.1.0-beta.3':
+    dependencies:
+      '@tauri-apps/api': 2.0.0-beta.13
+
+  '@tauri-apps/plugin-http@2.0.0-beta.6':
     dependencies:
       '@tauri-apps/api': 2.0.0-beta.13
 
