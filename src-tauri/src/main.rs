@@ -6,7 +6,7 @@ use config_file::{read_config, write_config};
 use tauri::{AppHandle, Manager};
 use tauri::{
     menu::{MenuBuilder, MenuItemBuilder},
-    tray::{MouseButton, TrayIconBuilder, TrayIconEvent},
+    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
 };
 // use anyhow::{Result, Context};
 mod cli;
@@ -80,14 +80,17 @@ fn main() {
                 })
                 .menu_on_left_click(false)
                 .on_tray_icon_event(|tray, event| {
-                    match event {
-                        TrayIconEvent::Click {
+                    if let TrayIconEvent::Click {
                             button: MouseButton::Left,
+                            button_state: MouseButtonState::Up,
                             ..
-                        } => {
-                            toggle_window(tray.app_handle());
+                    } = event
+                    {
+                        let app = tray.app_handle();
+                        if let Some(webview_window) = app.get_webview_window("main") {
+                        let _ = webview_window.show();
+                        let _ = webview_window.set_focus();
                         }
-                        _ => {}
                     }
                 })
                 .build(app)?;
