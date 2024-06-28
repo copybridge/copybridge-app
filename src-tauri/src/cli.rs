@@ -32,7 +32,7 @@ enum Commands {
     Connect { server_url: Url },
 
     /// Create a new clipboard and add to this device
-    Create { name: String },
+    Create(CreateArgs),
 
     /// Add a clipboard to this device
     Add(AddDeleteArgs),
@@ -51,6 +51,20 @@ enum Commands {
 
     /// Delete a clipboard in server and from all the devices
     Delete(AddDeleteArgs),
+}
+
+#[derive(Args, Clone, Debug, Deserialize, Serialize)]
+pub struct CreateArgs {
+    /// Name of the clipboard to create
+    pub name: String,
+
+    /// Password for the clipboard if you want to encrypt it
+    #[arg(short, long)]
+    pub password: Option<String>,
+
+    /// Force the operation
+    #[arg(short, long)]
+    pub force: bool,
 }
 
 #[derive(Args, Clone, Debug, Deserialize, Serialize)]
@@ -146,18 +160,15 @@ pub fn handle_cli() {
             set_is_cli(true);
             let config = Config::read().unwrap();
             let mut exit_code = 0;
-            // CONFIG
-            //     .set(Mutex::new(config))
-            //     .expect("Config already initialized");
             match command {
                 Commands::Connect { server_url } => {
                     exit_code = cli_connect(config, server_url);
                 }
+                Commands::Create(args) => {
+                    exit_code = cli_create(config, args);
+                }
                 Commands::Add(args) => {
                     exit_code = cli_add(config, args);
-                }
-                Commands::Create { name } => {
-                    cmd::create(name);
                 }
                 Commands::List => {
                     cmd::list();
@@ -185,6 +196,16 @@ pub fn handle_cli() {
 
 fn cli_connect(config: Config, server_url: &Url) -> i32 {
     match Runtime::new().unwrap().block_on(cmd::connect(config, server_url.clone())) {
+        Ok(()) => 0,
+        Err(err) => {
+            println!("{}: {}", err.title, err.message);
+            err.code
+        }
+    }
+}
+
+fn cli_create(config: Config, args: &CreateArgs) -> i32 {
+    match Runtime::new().unwrap().block_on(cmd::create(config, args.clone())) {
         Ok(()) => 0,
         Err(err) => {
             println!("{}: {}", err.title, err.message);

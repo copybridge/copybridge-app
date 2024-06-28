@@ -41,7 +41,8 @@ fn main() {
             greet,
             read_config,
             write_config,
-            cmd::add
+            cmd::create,
+            cmd::add,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

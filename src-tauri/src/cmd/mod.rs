@@ -33,3 +33,19 @@ struct ApiResponse {
     pub data: String,
     pub is_encrypted: bool,
 }
+
+#[derive(Deserialize, Serialize, Debug)]
+struct PostBody {
+    pub name: String,
+    #[serde(rename = "type")]
+    pub data_type: String,
+    pub data: String,
+    pub is_encrypted: bool,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+struct PutBody {
+    #[serde(rename = "type")]
+    pub data_type: String,
+    pub data: String,
+}

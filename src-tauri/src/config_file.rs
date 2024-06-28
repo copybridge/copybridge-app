@@ -99,5 +99,17 @@ impl Config {
             None => None,
         }
     }
+
+    pub fn get_clipboard_by_name(&self, name: &str) -> Option<&Clipboard> {
+        self.clipboards.iter().find(|c| c.name == name)
+    }
+
+    pub fn remove_clipboard_by_name(&mut self, name: &str) -> Option<Clipboard> {
+        let index = self.clipboards.iter().position(|c| c.name == name);
+        match index {
+            Some(index) => Some(self.clipboards.remove(index)),
+            None => None,
+        }
+    }
 }
 

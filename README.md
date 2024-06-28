@@ -27,11 +27,16 @@ server="localhost:8383"
 [[clipboards]]
 id=100004
 name="test"
-is_encrypted=true
 password="bXlwYXNzCg==" # base64 encoded for "mypass"
 
 [[clipboards]]
 id=100005
 name="another test"
-is_encrypted=false
 ```
+
+## TODO
+- Names are independent to each device:
+  - [ ] Add optional `name` field to `AddArgs` (Seperate `AddDeleteArgs`)
+  - [ ] Ask for name in cli while `add`
+  - [ ] Add name field in GUI for `Add Clipboard`
+  - [ ] Store the user's input locally

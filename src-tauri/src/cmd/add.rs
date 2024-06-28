@@ -67,7 +67,7 @@ pub async fn add(config: Config, args: AddDeleteArgs) -> Result<(), Error> {
     });
 
     let writing = write_config(config);
-    println!("Successfully added clipboard ID {}: {}", data.id, data.name);
+    println!("Successfully added clipboard ID {}: '{}'", data.id, data.name);
     writing.await
 
 }
