@@ -13,8 +13,8 @@ connect <addr>
 create <name> [ -p <password> ] [ -f ]
 add <id> [ -p <password> ] [ -f ]
 list
-copy [ -i <id> | -n <name> ] [ -p <password> ] [ --echo ]
-paste [ -i <id> | -n <name> ] [ -p <password> ] [ <content> | -f <file> ]
+copy [ -i <id> | -n <name> ] [ --echo ]
+paste [ -i <id> | -n <name> ] [ -d <data_type> ] [ <content> | -f <file> ]
 remove [ <id> | <name> ]
 delete <id> [ -p <password> ]
 ```
