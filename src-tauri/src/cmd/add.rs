@@ -7,7 +7,7 @@ use crate::err::Error;
 use super::ApiResponse;
 
 #[tauri::command]
-pub async fn add(config: Config, args: AddDeleteArgs) -> Result<(), Error> {
+pub async fn add(config: Config, args: AddDeleteArgs) -> Result<Config, Error> {
     let mut config = config;
     let mut args = args;
     println!("Adding a new clipboard to this device: ID {}", args.id);
@@ -21,6 +21,10 @@ pub async fn add(config: Config, args: AddDeleteArgs) -> Result<(), Error> {
                 format!("ID {}, Name '{}'", clipboard.id, clipboard.name)
             ));
         }
+    }
+
+    if args.password == Some(String::new()) {
+        args.password = None;
     }
     
     let mut url = Url::parse(&config.server).unwrap();
@@ -66,8 +70,8 @@ pub async fn add(config: Config, args: AddDeleteArgs) -> Result<(), Error> {
         password: args.password,
     });
 
-    let writing = write_config(config);
+    write_config(config.clone()).await?;
     println!("Successfully added clipboard ID {}: '{}'", data.id, data.name);
-    writing.await
 
+    Ok(config)
 }

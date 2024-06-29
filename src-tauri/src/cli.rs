@@ -185,10 +185,10 @@ pub fn handle_cli() {
                     exit_code = cli_paste(config, args);
                 }
                 Commands::Remove(args) => {
-                    cmd::remove(args);
+                    exit_code = cli_remove(config, args);
                 }
                 Commands::Delete(args) => {
-                    cmd::delete(args);
+                    exit_code = cli_delete(config, args);
                 } // _ => {
                   //     println!("Not implemented yet!!");
                   // }
@@ -211,7 +211,7 @@ fn cli_connect(config: Config, server_url: &Url) -> i32 {
 
 fn cli_create(config: Config, args: &CreateArgs) -> i32 {
     match Runtime::new().unwrap().block_on(cmd::create(config, args.clone())) {
-        Ok(()) => 0,
+        Ok(_) => 0,
         Err(err) => {
             println!("{}: {}", err.title, err.message);
             err.code
@@ -221,7 +221,7 @@ fn cli_create(config: Config, args: &CreateArgs) -> i32 {
 
 fn cli_add(config: Config, args: &AddDeleteArgs) -> i32 {
     match Runtime::new().unwrap().block_on(cmd::add(config, args.clone())) {
-        Ok(()) => 0,
+        Ok(_) => 0,
         Err(err) => {
             println!("{}: {}", err.title, err.message);
             err.code
@@ -271,6 +271,26 @@ fn cli_copy(config: Config, args: &CopyArgs) -> i32 {
 fn cli_paste(config: Config, args: &PasteArgs) -> i32 {
     match Runtime::new().unwrap().block_on(cmd::set_content(config, args.clone())) {
         Ok(()) => 0,
+        Err(err) => {
+            println!("{}: {}", err.title, err.message);
+            err.code
+        }
+    }
+}
+
+fn cli_remove(config: Config, args: &RemoveArgs) -> i32 {
+    match Runtime::new().unwrap().block_on(cmd::remove(config, args.clone())) {
+        Ok(_) => 0,
+        Err(err) => {
+            println!("{}: {}", err.title, err.message);
+            err.code
+        }
+    }
+}
+
+fn cli_delete(config: Config, args: &AddDeleteArgs) -> i32 {
+    match Runtime::new().unwrap().block_on(cmd::delete(config, args.clone())) {
+        Ok(_) => 0,
         Err(err) => {
             println!("{}: {}", err.title, err.message);
             err.code

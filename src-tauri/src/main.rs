@@ -49,6 +49,8 @@ fn main() {
             cmd::add,
             cmd::get_content,
             cmd::set_content,
+            cmd::remove,
+            cmd::delete,
         ])
         .on_window_event(|window, event| match event {
             // tauri::WindowEvent::Focused(focused) => {

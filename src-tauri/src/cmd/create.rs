@@ -7,7 +7,7 @@ use crate::err::Error;
 use super::{ApiResponse, PostBody};
 
 #[tauri::command]
-pub async fn create(config: Config, args: CreateArgs) -> Result<(), Error> {
+pub async fn create(config: Config, args: CreateArgs) -> Result<Config, Error> {
     let mut config = config;
     let mut args = args;
     println!("Creating a new clipboard: '{}'", &args.name);
@@ -37,6 +37,10 @@ pub async fn create(config: Config, args: CreateArgs) -> Result<(), Error> {
                 ));
             }
         }
+    }
+    
+    if args.password == Some(String::new()) {
+        args.password = None;
     }
 
     let mut url = Url::parse(&config.server).unwrap();
@@ -75,7 +79,8 @@ pub async fn create(config: Config, args: CreateArgs) -> Result<(), Error> {
         password: args.password,
     });
 
-    let writing = write_config(config);
+    write_config(config.clone()).await?;
     println!("Successfully created clipboard ID {}: '{}'", data.id, data.name);
-    writing.await
+
+    Ok(config)
 }

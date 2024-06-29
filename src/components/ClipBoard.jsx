@@ -26,35 +26,12 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-    Alert,
-    AlertDescription,
-    AlertTitle,
-} from "@/components/ui/alert"
 import { useEffect, useState } from "react"
 
 
-function ClipBoard() {
-    let defaultConfig = {
-        server: "",
-        clipboards: []
-    };
-    const [config, setConfig] = useState(defaultConfig)
-    const [error, setError] = useState(null);
+function ClipBoard({config, setConfig, setError}) {
     const [copyingStates, setCopyingStates] = useState({});
     const [pastingStates, setPastingStates] = useState({});
-
-    useEffect(() => {
-        invoke("read_config")
-            .then((res) => {
-                setConfig(res);
-                setError(null);
-                console.log("read config")
-            })
-            .catch((err) => {
-                setError(err);
-            });
-    } , [])
 
     const onCopy = (id) => {
         setCopyingStates(prev => ({ ...prev, [id]: 'copying' }));
@@ -97,24 +74,49 @@ function ClipBoard() {
                     })
                     .catch((err) => {
                         setError(err);
+                        setPastingStates(prev => ({ ...prev, [id]: null }));
                     });
             })
             .catch((err) => {
                 setError({ title: "Failed to paste", message: err });
+                setPastingStates(prev => ({ ...prev, [id]: null }));
+            });
+    }
+
+    const onCopyID = (id) => {
+        writeText(String(id))
+            .then(() => {
+                setError(null);
+            })
+            .catch((err) => {
+                setError({ title: "Failed to copy ID", message: err });
+            });
+    }
+
+    const onRemove = (id) => {
+        invoke("remove", { config: config, args: {id: id} })
+            .then((config) => {
+                setError(null);
+                setConfig(config);
+            })
+            .catch((err) => {
+                setError(err);
+            });
+    }
+
+    const onDelete = (id) => {
+        invoke("delete", { config: config, args: {id: id, force: false} })
+            .then((config) => {
+                setError(null);
+                setConfig(config);
+            })
+            .catch((err) => {
+                setError(err);
             });
     }
 
     return (
         <div>
-        {error && (
-            <Alert variant="destructive" className="text-red-400">
-                <AlertCircle className="h-5 w-5" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>
-                <span className="bold">{error.title}</span>: {error.message}
-                </AlertDescription>
-            </Alert>
-        )}
         <Table>
             <TableCaption>Your current active clipboards.</TableCaption>
             <TableBody>
@@ -155,11 +157,14 @@ function ClipBoard() {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                    <DropdownMenuItem>Copy ID</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => {onCopyID(clipboard.id)}} >Copy ID</DropdownMenuItem>
                                     <DropdownMenuItem>Rename</DropdownMenuItem>
-                                    <DropdownMenuItem>Remove</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => {onRemove(clipboard.id)}}>Remove</DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem className="text-red-500 hover:text-red-600">
+                                    <DropdownMenuItem
+                                        className="text-red-500 hover:text-red-600"
+                                        onClick={() => {onDelete(clipboard.id)}}
+                                    >
                                             Delete Clipboard
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
