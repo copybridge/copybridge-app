@@ -95,6 +95,7 @@ fn main() {
                         }
                     }
                 })
+                .icon(tauri::image::Image::from_path("icons/icon.ico").expect("Icon not found"))
                 .build(app)?;
 
             Ok(())

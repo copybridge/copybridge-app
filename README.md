@@ -1,10 +1,11 @@
-# Tauri + React
+# CopyBridge
 
-This template should help get you started developing with Tauri and React in Vite.
+<center>
 
-## Recommended IDE Setup
+![](./media/v1.png)
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+</center>
+
 
 ## CLI
 
@@ -22,7 +23,7 @@ delete <id> [ -p <password> ]
 ## Config File
 
 ```toml
-server="localhost:8383"
+server="http://localhost:8383"
 
 [[clipboards]]
 id=100004
@@ -35,9 +36,16 @@ name="another test"
 ```
 
 ## TODO
-- Systray
-- Names are independent to each device:
+- [ ] Branding: Icon
+- [ ] Names are independent to each device:
   - [ ] Add optional `name` field to `AddArgs` (Seperate `AddDeleteArgs`)
   - [ ] Ask for name in cli while `add`
   - [ ] Add name field in GUI for `Add Clipboard`
   - [ ] Store the user's input locally
+- [ ] Global shortcut
+- [ ] Server setup at first launch
+- [ ] Auto launch at login
+- [ ] Settings page
+  - [ ] shortcut
+  - [ ] server_url
+  - [ ] autolaunch
