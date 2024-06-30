@@ -1,8 +1,8 @@
 [package]
 name = "copybridge-app"
-version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
+version = "0.0.1"
+description = "An app to copy/paste from/to multiple clipboards across devices"
+authors = ["Abhishek M J", "Siddesh Devarakonda"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
