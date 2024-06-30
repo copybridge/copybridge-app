@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use config_file::{read_config, write_config};
+use tauri::image::Image;
 // use config::Clipboard;
 use tauri::{AppHandle, Manager};
 use tauri::{
@@ -89,13 +90,11 @@ fn main() {
                     } = event
                     {
                         let app = tray.app_handle();
-                        if let Some(webview_window) = app.get_webview_window("main") {
-                        let _ = webview_window.show();
-                        let _ = webview_window.set_focus();
-                        }
+                        show_window(app);
                     }
                 })
-                .icon(tauri::image::Image::from_path("icons/icon.ico").expect("Icon not found"))
+                .icon(Image::from_bytes(include_bytes!("../icons/icon.ico")).unwrap())
+                .tooltip("CopyBridge")
                 .build(app)?;
 
             Ok(())
@@ -113,14 +112,10 @@ fn main() {
 }
 
 fn show_window(app: &AppHandle) {
-    let windows = app.webview_windows();
-
-    windows
-        .values()
-        .next()
-        .expect("Sorry, no window found")
-        .set_focus()
-        .expect("Can't Bring Window to Focus");
+    if let Some(webview_window) = app.get_webview_window("main") {
+        let _ = webview_window.show();
+        let _ = webview_window.set_focus();
+    }
 }
 
 fn toggle_window(app: &AppHandle) {

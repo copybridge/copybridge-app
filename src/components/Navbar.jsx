@@ -42,6 +42,14 @@ const Navbar = ({config, setConfig, setError}) => {
 
   const onCreate = () => {
     setNewClipboardState('adding');
+    if (showPasswordFieldCreate && clipboardPassword === '') {
+      setError({title: "Failed to create clipboard", message: "Password is required"});
+      setNewClipboardState(null);
+      return;
+    }
+    if (!showPasswordFieldCreate) {
+      setClipboardPassword('');
+    }
     invoke("create", { config: config, args: { name: clipboardName, password: clipboardPassword, force: false} })
       .then((config) => {
         setError(null);
@@ -61,6 +69,14 @@ const Navbar = ({config, setConfig, setError}) => {
 
   const onAdd = () => {
     setNewClipboardState('adding');
+    if (showPasswordFieldAdd && addClipboardPassword === '') {
+      setError({title: "Failed to add clipboard", message: "Password is required"});
+      setNewClipboardState(null);
+      return;
+    }
+    if (!showPasswordFieldAdd) {
+      setAddClipboardPassword('');
+    }
     invoke("add", { config: config, args: { id: Number(addClipboardId), password: addClipboardPassword, force: false} })
       .then((config) => {
         setError(null);
@@ -141,7 +157,7 @@ const Navbar = ({config, setConfig, setError}) => {
                   />
                 </div>
                 <DialogClose asChild>
-                <Button size="sm" className='order-last m-1' onClick={onCreate}>Create</Button>
+                  <Button size="sm" className='order-last m-1' onClick={onCreate}>Create</Button>
                 </DialogClose>
               </div>
             </TabsContent>
@@ -150,6 +166,7 @@ const Navbar = ({config, setConfig, setError}) => {
                 <Label htmlFor="clipboard-id">Clipboard ID</Label>
                 <Input
                   id="clipboard-id"
+                  type="number"
                   value={addClipboardId}
                   onChange={(e) => setAddClipboardId(e.target.value)}
                 />
@@ -179,7 +196,7 @@ const Navbar = ({config, setConfig, setError}) => {
                   />
                 </div>
                 <DialogClose asChild>
-                <Button size="sm" className='order-last m-1' onClick={onAdd}>Add</Button>
+                  <Button size="sm" className='order-last m-1' onClick={onAdd}>Add</Button>
                 </DialogClose>
               </div>
             </TabsContent>
