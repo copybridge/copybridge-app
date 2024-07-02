@@ -36,6 +36,7 @@ name="another test"
 ```
 
 ## TODO
+- [ ] Show button
 - [ ] Branding: Icon
 - [ ] Names are independent to each device:
   - [ ] Add optional `name` field to `AddArgs` (Seperate `AddDeleteArgs`)
@@ -45,6 +46,7 @@ name="another test"
 - [ ] Global shortcut
 - [ ] Server setup at first launch
 - [ ] Auto launch at login
+- [ ] Watch config changes
 - [ ] Settings page
   - [ ] shortcut
   - [ ] server_url
