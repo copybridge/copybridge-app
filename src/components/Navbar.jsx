@@ -106,7 +106,12 @@ const Navbar = ({ config, setConfig, setError }) => {
       <Link to="/">
         <p className='text-xl m-2'>CopyBridge</p>
       </Link>
-      <div className='flex space-x-4'>
+      <div className='flex space-x-1'>
+        <Link to="/settings">
+          <Button size="sm" variant="ghost" className='m-1 order-last'>
+            <Settings className="" />
+          </Button>
+        </Link>
         <Dialog>
           <DialogTrigger asChild>
             <Button
@@ -115,10 +120,10 @@ const Navbar = ({ config, setConfig, setError }) => {
               className='m-1'
               disabled={newClipboardState === 'adding'}
             >
-              {newClipboardState === 'adding' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {newClipboardState === 'added' && <Check className="mr-2 h-4 w-4" />}
-              {!newClipboardState && <Plus className="mr-2 h-4 w-4" />}
               New Clipboard
+              {newClipboardState === 'adding' && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+              {newClipboardState === 'added' && <Check className="ml-2 h-4 w-4" />}
+              {!newClipboardState && <Plus className="ml-2 h-4 w-4" />}
             </Button>
           </DialogTrigger>
           <DialogContent className="w-[400px]">
@@ -208,11 +213,7 @@ const Navbar = ({ config, setConfig, setError }) => {
             </Tabs>
           </DialogContent>
         </Dialog>
-        <Link to="/settings">
-          <Button size="sm" variant="ghost" className='m-1 order-last'>
-            <Settings className="" />
-          </Button>
-        </Link>
+        
       </div>
     </nav>
   );

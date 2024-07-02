@@ -43,11 +43,10 @@ import { useEffect, useState } from "react"
 function ClipBoard({config, setConfig, setError}) {
     const [copyingStates, setCopyingStates] = useState({});
     const [pastingStates, setPastingStates] = useState({});
-    const [showingContent, setShowingContent] = useState("");
+    const [showingContent, setShowingContent] = useState({});
 
     const onCopy = (id) => {
         setCopyingStates(prev => ({ ...prev, [id]: 'copying' }));
-        // await new Promise((r) => setTimeout(() => r(), 2000));
         invoke("get_content", { config: config, args: {id: id, echo: false} })
             .then((content) => {
                 setError(null);
@@ -100,13 +99,31 @@ function ClipBoard({config, setConfig, setError}) {
             .then((content) => {
                 setError(null);
                 if (content.type === "text/plain") {
-                    setShowingContent(content.data);
+                    setShowingContent(prev => ({ ...prev, [id]: content.data }));
                 } else {
                     throw new Error("Unsupported clipboard content type.");
                 }
             })
             .catch((err) => {
                 setError(err);
+            });
+    }
+    
+    const onShowCopy = (id) => {
+        if (!showingContent[id]) {
+            onCopy(id);
+        }
+        setCopyingStates(prev => ({ ...prev, [id]: 'copying' }));
+        writeText(showingContent[id])
+            .then(() => {
+                setError(null);
+                setCopyingStates(prev => ({ ...prev, [id]: 'copied' }));
+                setTimeout(() => {
+                    setCopyingStates(prev => ({ ...prev, [id]: null }));
+                }, 2000);
+            })
+            .catch((err) => {
+                setError({ title: "Failed to copy content", message: err });
                 setCopyingStates(prev => ({ ...prev, [id]: null }));
             });
     }
@@ -150,7 +167,15 @@ function ClipBoard({config, setConfig, setError}) {
             <TableBody>
                 {config.clipboards.map((clipboard) => (
                     <TableRow key={clipboard.id}>
-                        <TableCell className="font-medium text-base text-center">{clipboard.name}</TableCell>
+                        <Dialog>
+                        <DialogTrigger asChild>
+                            <TableCell
+                                className="font-medium text-base text-center cursor-pointer"
+                                onClick={() => onShow(clipboard.id)}
+                            >
+                                {clipboard.name}
+                            </TableCell>
+                        </DialogTrigger>
                         <TableCell className="text-right">
                             <Button
                                 onClick={() => onPaste(clipboard.id)}
@@ -176,30 +201,20 @@ function ClipBoard({config, setConfig, setError}) {
                                 {copyingStates[clipboard.id] === 'copied' && <Check className="ml-2 h-4 w-4" />}
                                 {!copyingStates[clipboard.id] && <Copy className="ml-2 h-4 w-4" />}
                             </Button>
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button
-                                        onClick={() => onShow(clipboard.id)} 
-                                        size="sm" 
-                                        className="mx-2" 
-                                        variant='outline'
-                                    >
-                                        show
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent>
+                                <DialogContent className="w-[400px]">
                                     <DialogHeader>
                                     <DialogTitle></DialogTitle>
                                     <div className="grid w-full gap-1.5">
                                         <Label htmlFor="show">Content</Label>
                                         <Textarea 
                                             id="show"
-                                            value={showingContent}
-                                            placeholder="your content" 
-                                            disabled 
+                                            value={showingContent[clipboard.id]}
+                                            placeholder="Loading..."
+                                            className="select-text"
+                                            disabled
                                         />
                                         <Button 
-                                            onClick={() => onCopy(clipboard.id)} 
+                                            onClick={() => onShowCopy(clipboard.id)} 
                                             size="sm" 
                                             className="mx-2" 
                                             variant=""
@@ -213,7 +228,6 @@ function ClipBoard({config, setConfig, setError}) {
                                     </div>
                                     </DialogHeader>
                                 </DialogContent>
-                            </Dialog>
 
                             <DropdownMenu className=''>
                                 <DropdownMenuTrigger asChild>
@@ -237,6 +251,7 @@ function ClipBoard({config, setConfig, setError}) {
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </TableCell>
+                        </Dialog>
                     </TableRow>
                 ))}
             </TableBody>
