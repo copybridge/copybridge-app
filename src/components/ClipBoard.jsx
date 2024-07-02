@@ -1,6 +1,8 @@
 import { invoke } from "@tauri-apps/api/core"
 import { writeText, readText } from '@tauri-apps/plugin-clipboard-manager';
 import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 import { 
     MoreHorizontal, 
     Copy, 
@@ -26,12 +28,22 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+  } from "@/components/ui/dialog"
+  
 import { useEffect, useState } from "react"
 
 
 function ClipBoard({config, setConfig, setError}) {
     const [copyingStates, setCopyingStates] = useState({});
     const [pastingStates, setPastingStates] = useState({});
+    const [showingContent, setShowingContent] = useState("");
 
     const onCopy = (id) => {
         setCopyingStates(prev => ({ ...prev, [id]: 'copying' }));
@@ -80,6 +92,22 @@ function ClipBoard({config, setConfig, setError}) {
             .catch((err) => {
                 setError({ title: "Failed to paste", message: err });
                 setPastingStates(prev => ({ ...prev, [id]: null }));
+            });
+    }
+
+    const onShow = (id) => {
+        invoke("get_content", { config: config, args: {id: id, echo: false} })
+            .then((content) => {
+                setError(null);
+                if (content.type === "text/plain") {
+                    setShowingContent(content.data);
+                } else {
+                    throw new Error("Unsupported clipboard content type.");
+                }
+            })
+            .catch((err) => {
+                setError(err);
+                setCopyingStates(prev => ({ ...prev, [id]: null }));
             });
     }
 
@@ -148,6 +176,45 @@ function ClipBoard({config, setConfig, setError}) {
                                 {copyingStates[clipboard.id] === 'copied' && <Check className="ml-2 h-4 w-4" />}
                                 {!copyingStates[clipboard.id] && <Copy className="ml-2 h-4 w-4" />}
                             </Button>
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button
+                                        onClick={() => onShow(clipboard.id)} 
+                                        size="sm" 
+                                        className="mx-2" 
+                                        variant='outline'
+                                    >
+                                        show
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                    <DialogTitle></DialogTitle>
+                                    <div className="grid w-full gap-1.5">
+                                        <Label htmlFor="show">Content</Label>
+                                        <Textarea 
+                                            id="show"
+                                            value={showingContent}
+                                            placeholder="your content" 
+                                            disabled 
+                                        />
+                                        <Button 
+                                            onClick={() => onCopy(clipboard.id)} 
+                                            size="sm" 
+                                            className="mx-2" 
+                                            variant=""
+                                            disabled={copyingStates[clipboard.id] === 'copying'}
+                                        >
+                                            Copy
+                                            {copyingStates[clipboard.id] === 'copying' && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                                            {copyingStates[clipboard.id] === 'copied' && <Check className="ml-2 h-4 w-4" />}
+                                            {!copyingStates[clipboard.id] && <Copy className="ml-2 h-4 w-4" />}
+                                        </Button>
+                                    </div>
+                                    </DialogHeader>
+                                </DialogContent>
+                            </Dialog>
+
                             <DropdownMenu className=''>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" className="h-8 w-8 p-0">
