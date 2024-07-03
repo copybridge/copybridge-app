@@ -34,6 +34,16 @@ const Navbar = ({ config, setConfig, setError }) => {
 
   const [newClipboardState, setNewClipboardState] = useState(null);
 
+  const [server, setServer] = useState(config.server);
+
+  const onChangeServer = (e) => {
+    setServer(e.target.value);
+  };
+
+  const changeServer = () => {
+    // write to set server
+  }
+
   const openPasswordCreate = () => {
     setShowPasswordFieldCreate(!showPasswordFieldCreate);
   };
@@ -103,15 +113,45 @@ const Navbar = ({ config, setConfig, setError }) => {
 
   return (
     <nav className='flex flex-row justify-between p-2'>
-      <Link to="/">
-        <p className='text-xl m-2'>CopyBridge</p>
-      </Link>
+      <p className='text-xl m-2'>CopyBridge</p>
       <div className='flex space-x-1'>
-        <Link to="/settings">
-          <Button size="sm" variant="ghost" className='m-1 order-last'>
-            <Settings className="" />
-          </Button>
-        </Link>
+        <Dialog>
+          <DialogTrigger>
+            <Button size="sm" variant="ghost" className='m-1 order-last'>
+              <Settings className="" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Settings</DialogTitle>
+            </DialogHeader>
+            <div className="flex flex-col items-start space-x-2 space-y-2">
+              <div className="flex flex-row gap-2 justify-center items-center space-x-2">
+                <Label htmlFor="server" className="">
+                  Server
+                </Label>
+                <Input
+                  id="server"
+                  defaultValue={config.server}
+                  onChange={onChangeServer}
+                />
+                <Button size="sm" className="px-3" onclick={changeServer()}>
+                  Change
+                </Button>
+              </div>
+              <div className="flex items-center space-x-2">
+                <label
+                  htmlFor="autolaunch"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Auto Launch
+                </label>
+                <Checkbox id="autolaunch" />
+              </div>
+            </div>
+
+          </DialogContent>
+        </Dialog>
         <Dialog>
           <DialogTrigger asChild>
             <Button

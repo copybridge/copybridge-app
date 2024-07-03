@@ -7,9 +7,7 @@ import {
 } from "@/components/ui/alert";
 import ClipBoard from "./components/ClipBoard";
 import Navbar from "./components/Navbar";
-import Settings from "./components/Settings"; // Make sure to import Settings
 import { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
   const defaultConfig = {
@@ -33,7 +31,7 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
+    <>
       <Navbar config={config} setConfig={setConfig} setError={setError} />
       {error && (
         <Alert variant="destructive" className="text-red-400">
@@ -44,17 +42,8 @@ function App() {
           </AlertDescription>
         </Alert>
       )}
-      <Routes>
-        <Route 
-          path="/" 
-          element={<ClipBoard config={config} setConfig={setConfig} setError={setError} />} 
-        />
-        <Route 
-          path="/settings" 
-          element={<Settings />} 
-        />
-      </Routes>
-    </BrowserRouter>
+      <ClipBoard config={config} setConfig={setConfig} setError={setError} /> 
+    </>
   );
 }
 
